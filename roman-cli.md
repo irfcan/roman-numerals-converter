@@ -14,9 +14,7 @@ aws configure
 1. Create Security Group
 
 ```bash
-aws ec2 create-security-group \
-    --group-name roman_numerals_sec_grp \
-    --description "Allow ssh and http from anywhere"
+aws ec2 create-security-group --group-name roman_numerals_sec_grp --description "Allow ssh and http from anywhere"
 ```
 
 - We can check the security group with these command
@@ -27,17 +25,9 @@ aws ec2 describe-security-groups --group-names roman_numerals_sec_grp
 2. Create inbound rules
 
 ```bash
-aws ec2 authorize-security-group-ingress \
-    --group-name roman_numerals_sec_grp \
-    --protocol tcp \
-    --port 22 \
-    --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name roman_numerals_sec_grp --protocol tcp --port 22 --cidr 0.0.0.0/0
 
-aws ec2 authorize-security-group-ingress \
-    --group-name roman_numerals_sec_grp \
-    --protocol tcp \
-    --port 80 \
-    --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name roman_numerals_sec_grp --protocol tcp  --port 80 --cidr 0.0.0.0/0
 
 ```
 
@@ -45,7 +35,10 @@ aws ec2 authorize-security-group-ingress \
 
 - This command querlies the latest AMI ID
 ```bash
-aws ssm get-parameters --names /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query 'Parameters[0].[Value]' --output text
+aws ssm get-parameters ^
+--names /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 ^
+--query 'Parameters[0].[Value]' ^
+--output text
 ```
 
 - We can assign this latest AMI id output to the LATEST_AMI environmental variable and use in our CLI command 
@@ -73,14 +66,7 @@ python3 app.py
 - Now we can run the instance with CLI command. (Do not forget to create user-data.sh under "/home/ec2-user/" folder before run this command)
 
 ```bash
-aws ec2 run-instances \
-    --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
-    --count 1 \
-    --instance-type t3.micro \
-    --key-name guile \
-    --security-groups roman_numerals_sec_grp \
-    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=roman_numbers}]'\
-    --user-data file://user-data.sh
+aws ec2 run-instances --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --count 1  --instance-type t3.micro --key-name Irfan-SSH-NorthVirginia --security-groups roman_numerals_sec_grp --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=roman_numbers}]' --user-data file://user-data.sh
 ```
 file://home/ec2-user/user-data.sh  for ec2 instance.
 
@@ -99,13 +85,17 @@ aws ec2 describe-instances --filters "Name=tag:Name,Values=roman_numbers" --quer
 - To delete instances
 ```bash 
 aws ec2 terminate-instances --instance-ids ID_of_the_INSTANCE
+# aws ec2 terminate-instances --instance-ids i-06e153e97e3a2593e
 ```
 - To delete security groups
 ```bash
-aws ec2 delete-security-group --group-name roman_numerals_sec_grp
+
 ```
 
 AWS CloudFormation CLI Command:
 
 ```bash
-aws cloudformation create-stack --stack-name irfan --template-body file://roman-numerals-template.yaml --parameters ParameterKey=KeyPairParameter,ParameterValue=irfan
+aws cloudformation create-stack --stack-name irfanRomanNumStack --template-body file://roman-numerals-template.yaml --parameters ParameterKey=KeyPairParameter,ParameterValue=Irfan-SSH-NorthVirginia
+
+aws cloudformation describe-stacks
+aws cloudformation delete-stack --stack-name irfanRomanNumStack
