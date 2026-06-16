@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 First check the aws version
 
 ```bash
@@ -222,5 +221,3 @@ AWS CloudFormation CLI Command:
 
 ```bash
 aws cloudformation create-stack --stack-name guile --template-body file://roman-numerals-template.yaml --parameters ParameterKey=KeyPairParameter,ParameterValue=guile
->>>>>>> 7cf32ceefae820bdcd4324b27e21267ba3a1d6ca
-```
