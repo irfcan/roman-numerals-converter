@@ -12,7 +12,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
-      InstanceType: t2.micro
+      InstanceType: t3.micro
       KeyName: !Ref KeyPairParameter
       SecurityGroups: 
         - !Ref mySG
